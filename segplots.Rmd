@@ -1,0 +1,238 @@
+---
+title: "Plot colored segments with segplots"
+author: "Sumia Tahir"
+date: "12/09/2019"
+output: 
+  rmarkdown::html_vignette:
+vignette: >
+  %\VignetteIndexEntry{Making plots with colored segments with segplots}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{css, echo=FALSE}
+    body .main-container {
+      max-width: 1000px !important;
+      width: 1000px !important;
+    }
+    body {
+      max-width: 1000px !important;
+    }
+    ```
+    
+    
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+```
+
+```{r setup}
+library(segplots)
+```
+
+
+
+# Introduction to "segplots"
+*********************
+
+The segplots package includes two functions, **segcurve** and **segdat**.  
+
+The *segcurve* function plots a curve of the user-specified function (formula expression) and allows the user to select specific segments of interest that will be plotted in a different color. The labels for the segments are included in the legend. The maximum and minimum points of the function are also plotted and the coordinates are displayed in the legend.  
+
+The *segdat* function uses a dataset(x,y) to make the plot, instead of a formula.  The output is the same as for *segcurve*.
+
+
+
+
+# The "segcurve()" function
+**********************
+
+
+The *segcurve* function allows the user to plot a **mathematical expression** or a **piecewise function** and highlight segments of interest in a different color. 
+
+The segcurve() function takes the following arguments:
+
+**segcurve(f, xrange, title, xl, yl, nseg, segs, segcols, seglabs)**
+
+
+
+**f** is the formula or expression for the function.  It should be specified outside of calling *segcurve*. For example, if the formula is **x^3 + x^2**, then the following line should be added before *segcurve*:
+**f <- function(x) {x^3 + x^2}**
+
+
+
+
+The second argument, **"xrange"**, gives the vector for the domain of the function.  It is written in the form 
+**xrange <- c(x1, x2)** 
+
+
+
+The arguments, **"title"**, **"xl"** and **"yl"**, specify the **figure title**, **x-axis label** and **y-axis label**, respectively.  All of these should be specified in quotes, eg. **title="Figure title"**,
+because they take a character string as input.
+
+
+
+The argument, **"nseg"**, allows the user to specify the **number of segments** of interest in the plot that will be of a different color.
+
+
+
+The argument, **"segs"**, is a vector that lists all of the **x-values that give the starting and ending** of each segment.  For example, if we want to select the segments (3, 7) and (10, 13), the "segs" argument would look like this:
+**segs <- c(3,7,10,13)**
+(The length of segs should be **2*nseg.)
+
+
+
+The **"segcols"** argument specifies the **color for each segment**.  This is a vector of characters which has the same length as nseg and is specified as follows, with colors within quotes "" 
+Example, **segcols <- c("red", "blue", "green")**
+
+
+
+The **"seglabs"** argument specifies the label for each segment.  This is a vector of characters which has the same length as nseg and is specified as follows, with labels within quotes ""
+Example, **seglabs <- c("segment 1", "segment 2")**
+
+
+
+
+## Examples of *segcurve()*
+
+
+
+### **Example 1**
+
+We can plot the sine curve with domain (-10,10) and select three segments of interest: (-4,-1), (0.5, 2.5), (6,8).
+We can specify the colors of the segments to be red, blue and green, respectively, with the corresponding labels, 
+segment 1, segment 2, segment 3.
+
+```{r, fig.align = "center", fig.height = 9, fig.width = 9, out.width = "500px", out.height="400px"}
+f <- function(x) {sin(x)}
+segcurve(f, xrange=c(-10,10), nseg=3, segs=c(-4,-1,0.5,2.5,6,8), segcols=c("red", "blue", "green"), 
+         seglabs=c("segment 1", "segment 2", "segment 3"), title="Sine plot", xl="x", yl="sin(x)")
+
+```
+
+Our output shows a legend with labels corresponding to the colored segments of interest, as well as the coordinates 
+of the maximum and minimum values of the function. 
+
+
+
+### **Example 2**
+
+We can also try plotting a piecewise function. 
+
+$$
+f(x) = \begin{cases}
+x^2 & \text{if $x \geq 3$} \\
+2x + 3 & \text{if $x > -4, x < 3$} \\
+\dfrac {5(x)^3}{64} & \text{if $x \leq -4$} \\
+\end{cases}
+$$
+
+```{r, fig.align = "center", fig.height = 9, fig.width = 9, out.width = "500px", out.height="400px"}
+f <- function (x) {ifelse(x >= 3, x^2, ifelse(x > -4 & x < 3,  2*x+3, 5*x^3/64))}
+segcurve(f, xrange=c(-10,10), nseg=3, segs=c(-10,-4,-4,3,3,10), 
+         segcols=c("red", "blue", "green"), seglabs=c("5*x^3/64", "2*x + 3", "x^2"), 
+         title="Piecewise function", xl="x", yl="f(x)")
+```
+
+The output displays the function expression in the legend for each segment.
+
+
+
+
+
+
+# The "segdat()" function
+**********************
+
+The *segdat* function is the same as the *segcurve* function except that it uses a **dataset (x,y)** instead of a formula expression. 
+
+
+The segdat() function takes the following arguments:
+
+**segdat(x, y, title, xl, yl, nseg, segs, segcols, seglabs)**
+
+
+
+**x** is a vector of x-values from the data.  This should be specified outside of calling the *segdat* function.  
+
+
+**y** is a vector of y-values from the data. This should be specified outside of calling the *segdat* function. 
+
+Example,
+**y <- rnorm (30, 0, 1);**
+**x <- 1:30**
+
+
+
+
+The arguments, **"title"**, **"xl"** and **"yl"**, specify the **figure title**, **x-axis label** and **y-axis label**, respectively.  All of these should be specified in quotes, eg. **title="Figure title"**,
+because they take a character string as input.
+
+
+
+The argument, **"nseg"**, allows the user to specify the **number of segments** of interest in the plot that will be of a different color.
+
+
+
+The argument, **"segs"**, is a vector that lists all of the **x-values that give the starting and ending** of each segment.  For example, if we want to select the segments (3, 7) and (10, 13), the "segs" argument would look like this:
+**segs <- c(3,7,10,13)**
+(The length of segs should be **2*nseg.)
+
+
+
+The **"segcols"** argument specifies the **color for each segment**.  This is a vector of characters which has the same length as nseg and is specified as follows, with colors within quotes "" 
+Example, **segcols <- c("red", "blue", "green")**
+
+
+
+The **"seglabs"** argument specifies the label for each segment.  This is a vector of characters which has the same length as nseg and is specified as follows, with labels within quotes ""
+Example, **seglabs <- c("segment 1", "segment 2")**
+
+
+
+
+## Examples of *segdat()*
+
+
+### **Example 1**
+
+We can download the dataset data1.csv from the following webpage:
+
+https://bioelectromagnetism.wordpress.com/2012/11/28/data-from-ecg-recording-in-todays-class/
+
+The dataset includes 47500 samples of raw ECG recordings at a sampling frequency of 100Hz. 
+
+For our example below, we used 27 observations (index 168,194).
+
+
+```{r, fig.align = "center", fig.height = 9, fig.width = 9, out.width = "500px", out.height="400px"}
+data(ecg_data)
+y <- ecg_data[168:194,2]
+x <- ecg_data[168:194,1]
+segdat(x,y, title="Raw ECG Data - QRS complex", xl="index", yl="ECG signal", nseg=3,
+    segs=c(170,175,176,185,187,192), segcols=c("red","blue","green"),
+    seglabs=c("P wave","QRS complex","T wave"))
+```
+
+*Please note:* The above example is for illustrative purposes only; the ECG graph is not accurate. 
+
+
+
+### **Example 2**
+
+We can use the same dataset to plot a wider range of data, and highlight multiple peaks (QRS complexes). This time we will select 4 segments (nseg=4). 
+For this graph, we used 500 observations from the index 1000:1500.
+
+```{r, fig.align = "center", fig.height = 9, fig.width = 9, out.width = "500px", out.height="400px"}
+data(ecg_data)
+y <- ecg_data[1000:1500,2]
+x <- ecg_data[1000:1500,1]
+
+segdat(x,y, title="Raw ECG Data - Peaks", xl="index", yl="ECG signal", nseg=4,
+    segs=c(1020,1060,1160,1185,1285, 1310,1400,1450), segcols=c("red","blue","green", "yellow"),
+    seglabs=c("Peak 1","Peak 2","Peak 3", "Peak 4"))
+```
+
